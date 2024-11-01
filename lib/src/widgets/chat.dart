@@ -92,6 +92,7 @@ class Chat extends StatefulWidget {
     this.scrollPhysics,
     this.scrollToUnreadOptions = const ScrollToUnreadOptions(),
     this.showFooterDateTime = false,
+    this.showMyAvatar = false,
     this.showUserAvatars = false,
     this.showUserNames = false,
     this.systemMessageBuilder,
@@ -289,6 +290,9 @@ class Chat extends StatefulWidget {
 
   /// Show date time of each message under them.
   final bool showFooterDateTime;
+
+  /// See [Message.showMyAvatar].
+  final bool showMyAvatar;
 
   /// See [Message.showUserAvatars].
   final bool showUserAvatars;
@@ -525,6 +529,8 @@ class ChatState extends State<Chat> {
           footerDateTime: widget.showFooterDateTime ? _footerDateTimeText(message) : null,
           showStatus: map['showStatus'] == true,
           isLeftStatus: widget.isLeftStatus,
+          showMyAvatar: widget.showMyAvatar,
+          shouldShowMyAvatar: map['nextMessageInGroup'] == false,
           showUserAvatars: widget.showUserAvatars,
           textMessageBuilder: widget.textMessageBuilder,
           textMessageOptions: widget.textMessageOptions,

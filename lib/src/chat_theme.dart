@@ -118,6 +118,7 @@ abstract class ChatTheme {
     required this.userAvatarImageBackgroundColor,
     required this.userAvatarNameColors,
     required this.userAvatarTextStyle,
+    required this.myAvatarPadding,
     required this.userNameTextStyle,
     this.highlightMessageColor,
   });
@@ -323,6 +324,9 @@ abstract class ChatTheme {
   /// User names text style. Color will be overwritten with [userAvatarNameColors].
   final TextStyle userNameTextStyle;
 
+  /// Padding for my avatar if it is showed.
+  final EdgeInsets myAvatarPadding;
+
   /// Color used as background of message row on highligth.
   final Color? highlightMessageColor;
 }
@@ -503,6 +507,7 @@ class DefaultChatTheme extends ChatTheme {
       fontWeight: FontWeight.w800,
       height: 1.333,
     ),
+    super.myAvatarPadding = EdgeInsets.zero,
     super.userNameTextStyle = const TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.w800,
@@ -537,7 +542,7 @@ class DarkChatTheme extends ChatTheme {
       fontWeight: FontWeight.w800,
       height: 1.333,
     ),
-     super.dateFooterTextStyle = const TextStyle(
+    super.dateFooterTextStyle = const TextStyle(
       color: neutral7,
       fontSize: 12,
       fontWeight: FontWeight.w400,
@@ -688,6 +693,7 @@ class DarkChatTheme extends ChatTheme {
       fontWeight: FontWeight.w800,
       height: 1.333,
     ),
+    super.myAvatarPadding = EdgeInsets.zero,
     super.userNameTextStyle = const TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.w800,

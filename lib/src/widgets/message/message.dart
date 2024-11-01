@@ -48,6 +48,8 @@ class Message extends StatelessWidget {
     this.onMessageVisibilityChanged,
     this.onPreviewDataFetched,
     required this.roundBorder,
+    required this.showMyAvatar,
+    required this.shouldShowMyAvatar,
     required this.showAvatar,
     required this.showName,
     required this.showStatus,
@@ -149,6 +151,11 @@ class Message extends StatelessWidget {
   /// Rounds border of the message to visually group messages together.
   final bool roundBorder;
 
+  /// Show author avatar.
+  final bool showMyAvatar;
+
+  final bool shouldShowMyAvatar;
+
   /// Show user avatar for the received message. Useful for a group chat.
   final bool showAvatar;
 
@@ -198,6 +205,19 @@ class Message extends StatelessWidget {
             onAvatarTap: onAvatarTap,
           )
       : const SizedBox(width: 40);
+
+  Widget _myAvatarBuilder(BuildContext context) => Padding(
+        padding: InheritedChatTheme.of(context).theme.myAvatarPadding,
+        child: shouldShowMyAvatar
+            ? avatarBuilder?.call(message.author) ??
+                UserAvatar(
+                  author: message.author,
+                  bubbleRtlAlignment: bubbleRtlAlignment,
+                  imageHeaders: imageHeaders,
+                  onAvatarTap: onAvatarTap,
+                )
+            : const SizedBox(width: 40),
+      );
 
   Widget _bubbleBuilder(
     BuildContext context,
@@ -436,6 +456,7 @@ class Message extends StatelessWidget {
             ),
           ),
           if (currentUserIsAuthor && !isLeftStatus) _statusIcon(context),
+          if (currentUserIsAuthor && showMyAvatar) _myAvatarBuilder(context),
         ],
       ),
     );
