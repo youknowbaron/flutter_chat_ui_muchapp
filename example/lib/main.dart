@@ -150,10 +150,8 @@ class _ChatPageState extends State<ChatPage> {
 
       if (message.uri.startsWith('http')) {
         try {
-          final index =
-              _messages.indexWhere((element) => element.id == message.id);
-          final updatedMessage =
-              (_messages[index] as types.FileMessage).copyWith(
+          final index = _messages.indexWhere((element) => element.id == message.id);
+          final updatedMessage = (_messages[index] as types.FileMessage).copyWith(
             isLoading: true,
           );
 
@@ -172,10 +170,8 @@ class _ChatPageState extends State<ChatPage> {
             await file.writeAsBytes(bytes);
           }
         } finally {
-          final index =
-              _messages.indexWhere((element) => element.id == message.id);
-          final updatedMessage =
-              (_messages[index] as types.FileMessage).copyWith(
+          final index = _messages.indexWhere((element) => element.id == message.id);
+          final updatedMessage = (_messages[index] as types.FileMessage).copyWith(
             isLoading: null,
           );
 
@@ -236,6 +232,11 @@ class _ChatPageState extends State<ChatPage> {
           showUserAvatars: true,
           showUserNames: true,
           user: _user,
+          theme: const DefaultChatTheme(
+            avatarAlignment: AvatarAlignment.top,
+            putUserNameOutsideOfBubble: true,
+          ),
+          showFooterDateTime: true,
         ),
       );
 }

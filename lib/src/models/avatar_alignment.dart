@@ -1,0 +1,4 @@
+enum AvatarAlignment {
+  bottom,
+  top;
+}

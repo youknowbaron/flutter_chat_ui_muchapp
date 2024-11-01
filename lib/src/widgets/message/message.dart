@@ -3,6 +3,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../conditional/conditional.dart';
+import '../../models/avatar_alignment.dart';
 import '../../models/bubble_rtl_alignment.dart';
 import '../../models/emoji_enlargement_behavior.dart';
 import '../../util.dart';
@@ -13,6 +14,7 @@ import 'image_message.dart';
 import 'message_status.dart';
 import 'text_message.dart';
 import 'user_avatar.dart';
+import 'user_name.dart';
 
 /// Base widget for all message types in the chat. Renders bubbles around
 /// messages and status. Sets maximum width for a message for
@@ -29,6 +31,7 @@ class Message extends StatelessWidget {
     this.customStatusBuilder,
     required this.emojiEnlargementBehavior,
     this.fileMessageBuilder,
+    this.footerDateTime,
     required this.hideBackgroundOnEmojiMessages,
     this.imageHeaders,
     this.imageMessageBuilder,
@@ -58,8 +61,7 @@ class Message extends StatelessWidget {
   });
 
   /// Build an audio message inside predefined bubble.
-  final Widget Function(types.AudioMessage, {required int messageWidth})?
-      audioMessageBuilder;
+  final Widget Function(types.AudioMessage, {required int messageWidth})? audioMessageBuilder;
 
   /// This is to allow custom user avatar builder
   /// By using this we can fetch newest user info based on id.
@@ -81,8 +83,7 @@ class Message extends StatelessWidget {
   final BubbleRtlAlignment? bubbleRtlAlignment;
 
   /// Build a custom message inside predefined bubble.
-  final Widget Function(types.CustomMessage, {required int messageWidth})?
-      customMessageBuilder;
+  final Widget Function(types.CustomMessage, {required int messageWidth})? customMessageBuilder;
 
   /// Build a custom status widgets.
   final Widget Function(types.Message message, {required BuildContext context})?
@@ -94,8 +95,7 @@ class Message extends StatelessWidget {
   final EmojiEnlargementBehavior emojiEnlargementBehavior;
 
   /// Build a file message inside predefined bubble.
-  final Widget Function(types.FileMessage, {required int messageWidth})?
-      fileMessageBuilder;
+  final Widget Function(types.FileMessage, {required int messageWidth})? fileMessageBuilder;
 
   /// Hide background for messages containing only emojis.
   final bool hideBackgroundOnEmojiMessages;
@@ -104,8 +104,7 @@ class Message extends StatelessWidget {
   final Map<String, String>? imageHeaders;
 
   /// Build an image message inside predefined bubble.
-  final Widget Function(types.ImageMessage, {required int messageWidth})?
-      imageMessageBuilder;
+  final Widget Function(types.ImageMessage, {required int messageWidth})? imageMessageBuilder;
 
   /// See [Chat.imageProviderBuilder].
   final ImageProvider Function({
@@ -133,8 +132,7 @@ class Message extends StatelessWidget {
   final void Function(BuildContext context, types.Message)? onMessageLongPress;
 
   /// Called when user makes a long press on status icon in any message.
-  final void Function(BuildContext context, types.Message)?
-      onMessageStatusLongPress;
+  final void Function(BuildContext context, types.Message)? onMessageStatusLongPress;
 
   /// Called when user taps on status icon in any message.
   final void Function(BuildContext context, types.Message)? onMessageStatusTap;
@@ -146,14 +144,16 @@ class Message extends StatelessWidget {
   final void Function(types.Message, bool visible)? onMessageVisibilityChanged;
 
   /// See [TextMessage.onPreviewDataFetched].
-  final void Function(types.TextMessage, types.PreviewData)?
-      onPreviewDataFetched;
+  final void Function(types.TextMessage, types.PreviewData)? onPreviewDataFetched;
 
   /// Rounds border of the message to visually group messages together.
   final bool roundBorder;
 
   /// Show user avatar for the received message. Useful for a group chat.
   final bool showAvatar;
+
+  /// Show date time of each message under them.
+  final String? footerDateTime;
 
   /// See [TextMessage.showName].
   final bool showName;
@@ -187,8 +187,7 @@ class Message extends StatelessWidget {
   final String? userAgent;
 
   /// Build an audio message inside predefined bubble.
-  final Widget Function(types.VideoMessage, {required int messageWidth})?
-      videoMessageBuilder;
+  final Widget Function(types.VideoMessage, {required int messageWidth})? videoMessageBuilder;
 
   Widget _avatarBuilder() => showAvatar
       ? avatarBuilder?.call(message.author) ??
@@ -206,31 +205,63 @@ class Message extends StatelessWidget {
     bool currentUserIsAuthor,
     bool enlargeEmojis,
   ) {
+    final putUserNameOutsideOfBubble =
+        InheritedChatTheme.of(context).theme.putUserNameOutsideOfBubble;
     final defaultMessage = (enlargeEmojis && hideBackgroundOnEmojiMessages)
-        ? _messageBuilder()
+        ? _messageBuilder(putUserNameOutsideOfBubble)
         : Container(
             decoration: BoxDecoration(
               borderRadius: borderRadius,
-              color: !currentUserIsAuthor ||
-                      message.type == types.MessageType.image
+              color: !currentUserIsAuthor || message.type == types.MessageType.image
                   ? InheritedChatTheme.of(context).theme.secondaryColor
                   : InheritedChatTheme.of(context).theme.primaryColor,
             ),
             child: ClipRRect(
               borderRadius: borderRadius,
-              child: _messageBuilder(),
+              child: _messageBuilder(putUserNameOutsideOfBubble),
             ),
           );
-    return bubbleBuilder != null
+    final bubble = bubbleBuilder != null
         ? bubbleBuilder!(
-            _messageBuilder(),
+            _messageBuilder(putUserNameOutsideOfBubble),
             message: message,
             nextMessageInGroup: roundBorder,
           )
         : defaultMessage;
+    if (showName && putUserNameOutsideOfBubble) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: currentUserIsAuthor ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          nameBuilder?.call(message.author) ?? UserName(author: message.author),
+          const SizedBox(height: 8),
+          bubble,
+          if (footerDateTime != null) ...[
+            const SizedBox(height: 8),
+            _footerDateTimeBuilder(context),
+          ],
+        ],
+      );
+    } else if (footerDateTime != null) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: currentUserIsAuthor ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          bubble,
+          const SizedBox(height: 8),
+          _footerDateTimeBuilder(context),
+        ],
+      );
+    }
+    return bubble;
   }
 
-  Widget _messageBuilder() {
+  Widget _footerDateTimeBuilder(BuildContext context) => Text(
+        footerDateTime!,
+        style: InheritedChatTheme.of(context).theme.dateFooterTextStyle,
+      );
+
+  Widget _messageBuilder(bool putUserNameOutsideOfBubble) {
     switch (message.type) {
       case types.MessageType.audio:
         final audioMessage = message as types.AudioMessage;
@@ -263,7 +294,7 @@ class Message extends StatelessWidget {
             ? textMessageBuilder!(
                 textMessage,
                 messageWidth: messageWidth,
-                showName: showName,
+                showName: showName && !putUserNameOutsideOfBubble,
               )
             : TextMessage(
                 emojiEnlargementBehavior: emojiEnlargementBehavior,
@@ -272,7 +303,7 @@ class Message extends StatelessWidget {
                 nameBuilder: nameBuilder,
                 onPreviewDataFetched: onPreviewDataFetched,
                 options: textMessageOptions,
-                showName: showName,
+                showName: showName && !putUserNameOutsideOfBubble,
                 usePreviewData: usePreviewData,
                 userAgent: userAgent,
               );
@@ -308,15 +339,13 @@ class Message extends StatelessWidget {
     final query = MediaQuery.of(context);
     final user = InheritedUser.of(context).user;
     final currentUserIsAuthor = user.id == message.author.id;
-    final enlargeEmojis =
-        emojiEnlargementBehavior != EmojiEnlargementBehavior.never &&
-            message is types.TextMessage &&
-            isConsistsOfEmojis(
-              emojiEnlargementBehavior,
-              message as types.TextMessage,
-            );
-    final messageBorderRadius =
-        InheritedChatTheme.of(context).theme.messageBorderRadius;
+    final enlargeEmojis = emojiEnlargementBehavior != EmojiEnlargementBehavior.never &&
+        message is types.TextMessage &&
+        isConsistsOfEmojis(
+          emojiEnlargementBehavior,
+          message as types.TextMessage,
+        );
+    final messageBorderRadius = InheritedChatTheme.of(context).theme.messageBorderRadius;
     final borderRadius = bubbleRtlAlignment == BubbleRtlAlignment.left
         ? BorderRadiusDirectional.only(
             bottomEnd: Radius.circular(
@@ -362,11 +391,12 @@ class Message extends StatelessWidget {
               : Alignment.centerLeft,
       margin: bubbleMargin,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: (!currentUserIsAuthor &&
+                InheritedChatTheme.of(context).theme.avatarAlignment == AvatarAlignment.top)
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
-        textDirection: bubbleRtlAlignment == BubbleRtlAlignment.left
-            ? null
-            : TextDirection.ltr,
+        textDirection: bubbleRtlAlignment == BubbleRtlAlignment.left ? null : TextDirection.ltr,
         children: [
           if (!currentUserIsAuthor && showUserAvatars) _avatarBuilder(),
           if (currentUserIsAuthor && isLeftStatus) _statusIcon(context),
@@ -384,8 +414,7 @@ class Message extends StatelessWidget {
                   child: onMessageVisibilityChanged != null
                       ? VisibilityDetector(
                           key: Key(message.id),
-                          onVisibilityChanged: (visibilityInfo) =>
-                              onMessageVisibilityChanged!(
+                          onVisibilityChanged: (visibilityInfo) => onMessageVisibilityChanged!(
                             message,
                             visibilityInfo.visibleFraction > 0.1,
                           ),

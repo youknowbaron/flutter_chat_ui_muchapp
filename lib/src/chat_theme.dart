@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'models/avatar_alignment.dart';
 import 'widgets/message/system_message.dart';
 import 'widgets/typing_indicator.dart';
 import 'widgets/unread_header.dart';
@@ -58,11 +59,13 @@ abstract class ChatTheme {
   const ChatTheme({
     required this.attachmentButtonIcon,
     required this.attachmentButtonMargin,
+    this.avatarAlignment = AvatarAlignment.bottom,
     required this.backgroundColor,
     this.bubbleMargin,
     required this.dateDividerMargin,
     required this.chatContentMargin,
     required this.dateDividerTextStyle,
+    required this.dateFooterTextStyle,
     required this.deliveredIcon,
     required this.documentIcon,
     required this.emptyChatPlaceholderTextStyle,
@@ -84,6 +87,7 @@ abstract class ChatTheme {
     required this.messageInsetsVertical,
     required this.messageMaxWidth,
     required this.primaryColor,
+    this.putUserNameOutsideOfBubble = false,
     required this.receivedEmojiMessageTextStyle,
     this.receivedMessageBodyBoldTextStyle,
     this.receivedMessageBodyCodeTextStyle,
@@ -124,6 +128,9 @@ abstract class ChatTheme {
   /// Margin of attachment button.
   final EdgeInsets? attachmentButtonMargin;
 
+  /// Align the avatar.
+  final AvatarAlignment avatarAlignment;
+
   /// Used as a background color of a chat widget.
   final Color backgroundColor;
 
@@ -138,6 +145,9 @@ abstract class ChatTheme {
 
   /// Text style of the date dividers.
   final TextStyle dateDividerTextStyle;
+
+  /// Text style of the date dividers.
+  final TextStyle dateFooterTextStyle;
 
   /// Icon for message's `delivered` status. For the best look use size of 16.
   final Widget? deliveredIcon;
@@ -201,6 +211,9 @@ abstract class ChatTheme {
   /// Primary color of the chat used as a background of sent messages
   /// and statuses.
   final Color primaryColor;
+
+  /// Set whether username stays inside of the first bubble or on top-most of messages.
+  final bool putUserNameOutsideOfBubble;
 
   /// Text style used for displaying emojis on text messages.
   final TextStyle receivedEmojiMessageTextStyle;
@@ -323,6 +336,7 @@ class DefaultChatTheme extends ChatTheme {
   const DefaultChatTheme({
     super.attachmentButtonIcon,
     super.attachmentButtonMargin,
+    super.avatarAlignment,
     super.backgroundColor = neutral7,
     super.bubbleMargin,
     super.dateDividerMargin = const EdgeInsets.only(
@@ -336,6 +350,12 @@ class DefaultChatTheme extends ChatTheme {
       color: neutral2,
       fontSize: 12,
       fontWeight: FontWeight.w800,
+      height: 1.333,
+    ),
+    super.dateFooterTextStyle = const TextStyle(
+      color: neutral2,
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
       height: 1.333,
     ),
     super.deliveredIcon,
@@ -374,6 +394,7 @@ class DefaultChatTheme extends ChatTheme {
     super.messageInsetsVertical = 16,
     super.messageMaxWidth = 440,
     super.primaryColor = primary,
+    super.putUserNameOutsideOfBubble,
     super.receivedEmojiMessageTextStyle = const TextStyle(fontSize: 40),
     super.receivedMessageBodyBoldTextStyle,
     super.receivedMessageBodyCodeTextStyle,
@@ -500,6 +521,7 @@ class DarkChatTheme extends ChatTheme {
   const DarkChatTheme({
     super.attachmentButtonIcon,
     super.attachmentButtonMargin,
+    super.avatarAlignment,
     super.backgroundColor = dark,
     super.bubbleMargin,
     super.dateDividerMargin = const EdgeInsets.only(
@@ -513,6 +535,12 @@ class DarkChatTheme extends ChatTheme {
       color: neutral7,
       fontSize: 12,
       fontWeight: FontWeight.w800,
+      height: 1.333,
+    ),
+     super.dateFooterTextStyle = const TextStyle(
+      color: neutral7,
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
       height: 1.333,
     ),
     super.deliveredIcon,
@@ -551,6 +579,7 @@ class DarkChatTheme extends ChatTheme {
     super.messageInsetsVertical = 16,
     super.messageMaxWidth = 440,
     super.primaryColor = primary,
+    super.putUserNameOutsideOfBubble,
     super.receivedEmojiMessageTextStyle = const TextStyle(fontSize: 40),
     super.receivedMessageBodyBoldTextStyle,
     super.receivedMessageBodyCodeTextStyle,
