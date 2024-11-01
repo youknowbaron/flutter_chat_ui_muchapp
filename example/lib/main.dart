@@ -237,6 +237,9 @@ class _ChatPageState extends State<ChatPage> {
             putUserNameOutsideOfBubble: true,
           ),
           showFooterDateTime: true,
+          showMyAvatar: true,
+          groupMessagesSpacerHeight: 12,
+          messagesSpacerHeight: 16,
         ),
       );
 }

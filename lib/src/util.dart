@@ -108,6 +108,7 @@ List<Object> calculateChatMessages(
   String? dateLocale,
   required int groupMessagesThreshold,
   double messagesSpacerHeight = 12,
+  double groupMessagesSpacerHeight = 0,
   String? lastReadMessageId,
   required bool showUserNames,
   DateFormat? timeFormat,
@@ -216,6 +217,14 @@ List<Object> calculateChatMessages(
         0,
         MessageSpacer(
           height: messagesSpacerHeight,
+          id: message.id,
+        ),
+      );
+    } else if (nextMessageInGroup && groupMessagesSpacerHeight > 0) {
+      chatMessages.insert(
+        0,
+        MessageSpacer(
+          height: groupMessagesSpacerHeight,
           id: message.id,
         ),
       );

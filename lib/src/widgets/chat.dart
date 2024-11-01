@@ -58,6 +58,7 @@ class Chat extends StatefulWidget {
     this.fileMessageBuilder,
     this.groupMessagesThreshold = 60000,
     this.messagesSpacerHeight = 12,
+    this.groupMessagesSpacerHeight = 0,
     this.hideBackgroundOnEmojiMessages = true,
     this.imageGalleryOptions = const ImageGalleryOptions(
       maxScale: PhotoViewComputedScale.covered,
@@ -183,6 +184,10 @@ class Chat extends StatefulWidget {
   /// Height value of spacers added to separate message groups.
   /// Default value is 12. If 0, no gap between groups.
   final double messagesSpacerHeight;
+
+  /// Height value of spacers added to same message groups.
+  /// Default value is 0.
+  final double groupMessagesSpacerHeight;
 
   /// See [Message.hideBackgroundOnEmojiMessages].
   final bool hideBackgroundOnEmojiMessages;
@@ -613,6 +618,7 @@ class ChatState extends State<Chat> {
         showUserNames: widget.showUserNames,
         timeFormat: widget.timeFormat,
         messagesSpacerHeight: widget.messagesSpacerHeight,
+        groupMessagesSpacerHeight: widget.groupMessagesSpacerHeight,
       );
 
       _chatMessages = result[0] as List<Object>;
