@@ -59,7 +59,7 @@ void main() {
   group('getVerboseDateTimeRepresentation', () {
     test('returns correctly formatted date and time', () {
       expect(
-        getVerboseDateTimeRepresentation(DateTime.utc(1989, 11, 9, 10)),
+        getVerboseDateTimeRepresentation(DateTime.utc(1989, 11, 9, 10), dateTimeSeparator: ', '),
         'Nov 9, 10:00',
       );
     });

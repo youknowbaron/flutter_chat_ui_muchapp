@@ -57,6 +57,7 @@ String getVerboseDateTimeRepresentation(
   DateFormat? dateFormat,
   String? dateLocale,
   DateFormat? timeFormat,
+  required String dateTimeSeparator,
 }) {
   final formattedDate = dateFormat != null
       ? dateFormat.format(dateTime)
@@ -72,7 +73,7 @@ String getVerboseDateTimeRepresentation(
     return formattedTime;
   }
 
-  return '$formattedDate, $formattedTime';
+  return '$formattedDate$dateTimeSeparator$formattedTime';
 }
 
 /// Returns whether the [message] consists of a single emoji or multiple emojis
@@ -112,6 +113,7 @@ List<Object> calculateChatMessages(
   String? lastReadMessageId,
   required bool showUserNames,
   DateFormat? timeFormat,
+  String dateTimeSeparator = ', ',
 }) {
   final chatMessages = <Object>[];
   final gallery = <PreviewImage>[];
@@ -199,6 +201,7 @@ List<Object> calculateChatMessages(
                   dateFormat: dateFormat,
                   dateLocale: dateLocale,
                   timeFormat: timeFormat,
+                  dateTimeSeparator: dateTimeSeparator,
                 ),
         ),
       );
@@ -253,6 +256,7 @@ List<Object> calculateChatMessages(
                   dateFormat: dateFormat,
                   dateLocale: dateLocale,
                   timeFormat: timeFormat,
+                  dateTimeSeparator: dateTimeSeparator,
                 ),
         ),
       );

@@ -52,6 +52,7 @@ class Chat extends StatefulWidget {
     this.dateHeaderThreshold = 900000,
     this.dateIsUtc = false,
     this.dateLocale,
+    this.dateTimeSeparator = ', ',
     this.disableImageGallery,
     this.emojiEnlargementBehavior = EmojiEnlargementBehavior.multi,
     this.emptyState,
@@ -162,6 +163,8 @@ class Chat extends StatefulWidget {
   /// date formatting in your app before passing any locale here, otherwise
   /// an error will be thrown. Also see [customDateHeaderText], [dateFormat], [timeFormat].
   final String? dateLocale;
+
+  final String dateTimeSeparator;
 
   /// Disable automatic image preview on tap.
   final bool? disableImageGallery;
@@ -563,6 +566,7 @@ class ChatState extends State<Chat> {
       dateFormat: widget.dateFormat,
       dateLocale: widget.dateLocale,
       timeFormat: widget.timeFormat,
+      dateTimeSeparator: widget.dateTimeSeparator,
     );
   }
 
@@ -625,6 +629,7 @@ class ChatState extends State<Chat> {
         timeFormat: widget.timeFormat,
         messagesSpacerHeight: widget.messagesSpacerHeight,
         groupMessagesSpacerHeight: widget.groupMessagesSpacerHeight,
+        dateTimeSeparator: widget.dateTimeSeparator,
       );
 
       _chatMessages = result[0] as List<Object>;
